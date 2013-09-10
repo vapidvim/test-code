@@ -1,0 +1,154 @@
+// DOM Ready
+$(function() {
+	
+	// SVG fallback
+	// toddmotto.com/mastering-svg-use-for-a-retina-web-fallbacks-with-png-script#update
+	if (!Modernizr.svg) {
+		var imgs = document.getElementsByTagName('img');
+		var dotSVG = /.*\.svg$/;
+		for (var i = 0; i != imgs.length; ++i) {
+			if(imgs[i].src.match(dotSVG)) {
+				imgs[i].src = imgs[i].src.slice(0, -3) + "png";
+			}
+		}
+	}
+	//Header Navigation Fade
+	$(".header .nav ul > li").hover(
+		function() { 
+			$(".header .nav ul > li").stop().fadeTo(100, 0.5);
+			$(this).stop().fadeTo(100, 1.0);
+		},
+		function() { $('.header .nav ul > li').stop().fadeTo(100, 1); }
+	);
+	
+	//Fittext
+	setTimeout( function() {
+	//$("#menu-item-55, #menu-item-47, #menu-item-49, #menu-item-46").fitText(.8, { minFontSize: '12px', maxFontSize: '30px' });	
+		$("#work_headline").fitText(1.1, { minFontSize: '18px', maxFontSize: '70px' });
+		$("#people_headline").fitText(1.6, { minFontSize: '16px', maxFontSize: '70px' });
+		$("#clients").fitText(.9, { minFontSize: '18px', maxFontSize: '70px' });
+		$(".responsive_headline2").fitText(.7, { minFontSize: '27px', maxFontSize: '70px' });
+		$("#script-text").fitText(1, { minFontSize: '21px', maxFontSize: '30px' });
+	}, 1);	
+
+	
+	//Scoll To Contact
+	$("#menu-item-46 a").click(function(e) {
+		$('html, body').animate({
+			scrollTop: $("#above-footer").offset().top
+		}, 600);
+		e.preventDefault();
+	});		
+		
+	//If Homepage functions
+	if($(".home").length > 0) {
+		
+		//Video Info Pop In Function
+		$('.video-thumb').hover(
+			function() {
+				$('.pop-video', this).show()
+				$('img', this).fadeTo(200, 0.5)
+				$('.fancybox', this).animate({
+					opacity: 1,
+					left: "15%",
+				}, 300);
+				$('.video-more', this).animate({
+					opacity: 1,
+					right: "15%",
+				}, 300);
+			},
+			function() {
+				$('.pop-video', this).hide();
+				$('img', this).fadeTo(0, 1)
+				$('.fancybox', this).stop().css({"opacity":"0","left":"0"});
+				$('.video-more', this).stop().css({"opacity":"0","right":"0"});
+			}
+		);
+		
+		//Scroll To Work Section
+		$("#menu-item-55 a").click(function(e) {
+			$('html, body').animate({
+				scrollTop: $("#work_headline").offset().top
+			}, 600);
+			e.preventDefault();
+		});
+		
+		//Scoll To Clients
+		$("#menu-item-79 a").click(function(e) {
+			$('html, body').animate({
+				scrollTop: $("#clients").offset().top
+			}, 600);
+			e.preventDefault();
+		});	
+		
+		//Fancybox Popup
+		//video pop
+		$(".fancybox").fancybox({
+			 type: "inline", // set type of content -Supported types are 'image', 'inline', 'ajax', 'iframe', 'swf' and 'html'
+			 width: 852, // or whatever
+			 height: 480,
+			 topRatio : 0.4,
+			 openEffect : "elastic",
+			 closeEffect : "fade",
+			 aspectRatio : true,
+			 autoSize : false, // so the size will be 800x1200
+			 autoCenter: true, // so fancybox will scroll down if needed
+			 fitToView : true, // so fancybox will try to scale
+			 padding : 0,
+			 autoDimensions : true,
+			 scrolling : "no",
+			 beforeShow : function() { 
+				var videoid = $('.fancybox-inner video').attr('id');
+				// var videosrc = $('.fancybox-inner video').attr('src');
+				// _V_(videoid).src(videosrc);
+				_V_(videoid).ready(function(){
+					var myPlayer = this;
+					myPlayer.load();
+					myPlayer.play();
+				});
+			 }
+		});
+		//info pop
+		$(".video-more").fancybox({
+			 type: "inline", // set type of content -Supported types are 'image', 'inline', 'ajax', 'iframe', 'swf' and 'html'
+			 width: 450, // or whatever
+			 height: 300,
+			 topRatio : 0.4,
+			 openEffect : "elastic",
+			 closeEffect : "fade",
+			 aspectRatio : false,
+			 autoSize : false,
+			 autoCenter: true, // so fancybox will scroll down if needed
+			 fitToView : true, // so fancybox will try to scale
+			 padding : 5,
+			 autoDimensions : true,
+			 scrolling : "auto"
+		});
+	}
+	//If Digital Storytellers functions
+	if($(".digital-storytellers").length > 0) {
+		//People pop
+		$(".people-more").fancybox({
+			 type: "inline", // set type of content -Supported types are 'image', 'inline', 'ajax', 'iframe', 'swf' and 'html'
+			 width: 450, // or whatever
+			 height: 300,
+			 topRatio : 0.4,
+			 openEffect : "elastic",
+			 closeEffect : "fade",
+			 aspectRatio : false,
+			 autoSize : false,
+			 autoCenter: true, // so fancybox will scroll down if needed
+			 fitToView : true, // so fancybox will try to scale
+			 padding : 5,
+			 autoDimensions : true,
+			 scrolling : "auto"
+		});
+		//Scoll To Clients
+		$("#menu-item-47 a").click(function(e) {
+			$('html, body').animate({
+				scrollTop: $("#people_headline").offset().top
+			}, 600);
+			e.preventDefault();
+		});	
+	}
+});
