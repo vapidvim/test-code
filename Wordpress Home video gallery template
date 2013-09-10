@@ -1,0 +1,55 @@
+<?php get_header(); ?>
+	
+	<!-- section -->
+	<section role="main">
+	
+		<h1 class="responsive_headline" id="work_headline">
+			<img src="<?php echo get_bloginfo('template_directory'); ?>/img/lcap.gif" class="headerside" />
+			<?php _e( 'Digital Stories', 'goalproductions' ); ?>
+			<img src="<?php echo get_bloginfo('template_directory'); ?>/img/rcap.gif" class="headerside" /></h1>
+		<div id="video-gallery-wrap">
+		<?php 
+			$args = array( 'post_type' => 'videos', 'post_status' => 'publish', 'posts_per_page' => -1 );
+			$loop = new WP_Query( $args );
+			while ( $loop->have_posts() ) : $loop->the_post(); ?>
+			<?php $vid_c += 1; ?>
+				<div class="gallery-item">
+					<h2><?php the_title(); ?></h2>
+					<div class="video-thumb">
+						<?php the_post_thumbnail("full"); ?>
+						<div class="pop-video" style="display:none;">
+							<a class="fancybox" href="#video<?php echo $vid_c; ?>">
+								<img src="<?php echo get_bloginfo('template_directory'); ?>/img/goal-productions.png" width="60px" height="51px" /><br />
+								Play Video
+							</a>
+							<a class="video-more" href="#info<?php echo $vid_c; ?>">
+								<img src="<?php echo get_bloginfo('template_directory'); ?>/img/document.png" width="60px" height="51px" /><br />
+								View Info
+							</a>
+						</div>
+					</div>
+					<div style="display: none;">
+						<div id="video<?php echo $vid_c; ?>">
+							<?php the_content(); ?>
+						</div>
+					</div>
+					<div style="display: none;">
+						<div class="infobox" id="info<?php echo $vid_c; ?>">
+							<h2><?php the_title(); ?></h2>
+							<?php
+								$vinfos = get_post_meta( $post->ID, 'video_description', true ); 
+								if (! empty ( $vinfos ) ) {
+									foreach( $vinfos as $vinfo){
+										echo $vinfo['video-description'];
+									}
+								}
+							?>
+						</div>
+					</div>
+				</div>
+			<?php endwhile; ?>
+		</div>
+	</section>
+	<!-- /section -->
+			
+<?php get_footer(); ?>
