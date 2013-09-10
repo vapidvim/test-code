@@ -1,0 +1,84 @@
+<?php if ($this->getOrderId()): 
+		$message = '';
+		$_order_details = Mage::getModel('sales/order')->loadByIncrementId(Mage::getSingleton('checkout/session')->getLastRealOrderId());
+		$_order_id = $this->getOrderId();
+		$_order_subtotal = $_order_details->discount_amount + $_order_details->subtotal;
+		$_order_subtotal = 0 < $_order_subtotal ? number_format($_order_subtotal ,2) : 0;
+		$_order_address = Mage::getModel('sales/order_address')->load($_order_details->billing_address_id);
+		$_order_state = $_order_address->getRegion();
+		$_order_country = $_order_address->getCountry();
+		$_order_items = $_order_details->getAllItems();
+		$_aff_souce = '';
+		$_aff_souce = Mage::getModel('core/cookie')->get('affiliatenetwork');
+
+		
+		if ( 'avl' == $_aff_souce ):
+			//Avantlink
+			$message .= '<!-- Avantlink Order Tracking -->';
+			$message .= '<script type="text/javascript">';
+			$message .= 'var _AvantMetrics = _AvantMetrics || [];';
+			$message .= "_AvantMetrics.push(['order',{ order_id:'".$_order_id."', amount:'".$_order_subtotal."', state:'".addslashes($_order_state)."', country:'".addslashes($_order_country)."' }]);";
+			foreach($_order_items as $item){
+				 if ($item->getParentItem()) {
+					continue; // ignoring simple product associated to master order item (configurable)
+				}
+				$message .=  "_AvantMetrics.push(['item',{ order_id:'".$_order_id."', parent_sku:'".addslashes($item->getSku())."', variant_sku:'', price:'".number_format($item->getPrice(), 2, '.', '')."', qty:'".number_format($item->getQtyOrdered())."' }]);";
+			}
+			$message .= '</script>';
+			//ShareASale autovoid
+			$message .= '<img src="https://shareasale.com/sale.cfm?amount='.$_order_subtotal.'&tracking='.$_order_id.'&transtype=sale&merchantID=42668&autovoid=1" width="1" height="1">';
+		elseif ( 'sas' == $_aff_souce): 
+			//Avantlink tracking suppression
+			$message .= '<!-- Avantlink Order Tracking -->';
+			$message .= '<script type="text/javascript">';
+			$message .= 'var _AvantMetrics = _AvantMetrics || [];';
+			$message .= "_AvantMetrics.push(['order',{ track:'N', order_id:'".$_order_id."', amount:'".$_order_subtotal."', state:'".addslashes($_order_state)."', country:'".addslashes($_order_country)."' }]);";
+			foreach($_order_items as $item){
+				 if ($item->getParentItem()) {
+					continue; // ignoring simple product associated to master order item (configurable)
+				}
+				$message .=  "_AvantMetrics.push(['item',{ order_id:'".$_order_id."', parent_sku:'".addslashes($item->getSku())."', variant_sku:'', price:'".number_format($item->getPrice(), 2, '.', '')."', qty:'".number_format($item->getQtyOrdered())."' }]);";
+			}
+			$message .= '</script>';
+			//ShareASale
+			$message .= '<img src="https://shareasale.com/sale.cfm?amount='.$_order_subtotal.'&tracking='.$_order_id.'&transtype=sale&merchantID=42668" width="1" height="1">';
+		elseif ( 'cj' == $_aff_souce): 
+			//CJ Old pixel
+			$message .= '<!-- BEGIN COMMISSION JUNCTION TRACKING CODE - DO NOT MODIFY -->';
+			$message .= '<img src="https://www.emjcd.com/u?AMOUNT='.$_order_subtotal.'&CID=1520118&OID='.$_order_id.'&TYPE=343035&CURRENCY=USD&METHOD=IMG" height="1" width="20">';
+			$message .= '<!-- END COMMISSION JUNCTION TRACKING CODE.-->';
+			//Avantlink tracking suppression
+			$message .= '<!-- Avantlink Order Tracking -->';
+			$message .= '<script type="text/javascript">';
+			$message .= 'var _AvantMetrics = _AvantMetrics || [];';
+			$message .= "_AvantMetrics.push(['order',{ track:'N', order_id:'".$_order_id."', amount:'".$_order_subtotal."', state:'".addslashes($_order_state)."', country:'".addslashes($_order_country)."' }]);";
+			foreach($_order_items as $item){
+				 if ($item->getParentItem()) {
+					continue; // ignoring simple product associated to master order item (configurable)
+				}
+				$message .=  "_AvantMetrics.push(['item',{ order_id:'".$_order_id."', parent_sku:'".addslashes($item->getSku())."', variant_sku:'', price:'".number_format($item->getPrice(), 2, '.', '')."', qty:'".number_format($item->getQtyOrdered())."' }]);";
+			}
+			$message .= '</script>';
+			
+			//ShareASale autovoid
+			$message .= '<img src="https://shareasale.com/sale.cfm?amount='.$_order_subtotal.'&tracking='.$_order_id.'&transtype=sale&merchantID=42668&autovoid=1" width="1" height="1">';
+		elseif ('' == $_aff_source) :
+			//Avantlink tracking suppression
+			$message .= '<!-- Avantlink Order Tracking -->';
+			$message .= '<script type="text/javascript">';
+			$message .= 'var _AvantMetrics = _AvantMetrics || [];';
+			$message .= "_AvantMetrics.push(['order',{ track:'N', order_id:'".$_order_id."', amount:'".$_order_subtotal."', state:'".addslashes($_order_state)."', country:'".addslashes($_order_country)."' }]);";
+			foreach($_order_items as $item){
+				 if ($item->getParentItem()) {
+					continue; // ignoring simple product associated to master order item (configurable)
+				}
+				$message .=  "_AvantMetrics.push(['item',{ order_id:'".$_order_id."', parent_sku:'".addslashes($item->getSku())."', variant_sku:'', price:'".number_format($item->getPrice(), 2, '.', '')."', qty:'".number_format($item->getQtyOrdered())."' }]);";
+			}
+			$message .= '</script>';
+			
+			//ShareASale autovoid
+			$message .= '<img src="https://shareasale.com/sale.cfm?amount='.$_order_subtotal.'&tracking='.$_order_id.'&transtype=sale&merchantID=42668&autovoid=1" width="1" height="1">';
+			
+		endif;
+		echo $message;
+endif; ?>
